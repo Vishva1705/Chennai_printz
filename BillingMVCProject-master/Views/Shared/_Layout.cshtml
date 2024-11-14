@@ -1,0 +1,162 @@
+﻿@*<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BillingMVCProject</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BillingMVCProject.styles.css" asp-append-version="true" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="~/js/CommonURL.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BillingMVCProject</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        
+                       
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="GSTWithout" asp-action="WithOutGSTInvoice">WithOutGSTInvoice</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="GSTWithout" asp-action="WithOutGSTInvoiceList">WithOutGSTInvoiceList</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+*@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>@ViewData["Title"] - BillingMVCProject</title>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/BillingMVCProject.styles.css" asp-append-version="true" />
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="~/js/CommonURL.js"></script>
+<style>
+    /* Basic styling for static sidebar */
+    body {
+        display: flex;
+    }
+    .sidebar {
+        height: 100vh;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #343a40; /* Dark background */
+        color: #fff;
+        padding-top: 1rem;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    .sidebar .nav-link {
+        font-size: 1.1rem;
+        color: #adb5bd; /* Light grey for inactive links */
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+        background-color: #495057; /* Darker background on hover and active */
+        color: #fff;
+        text-decoration: none;
+    }
+    .sidebar .nav-link i {
+        margin-right: 10px; /* Spacing between icon and text */
+    }
+    .content {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+    }
+    /* Media query for smaller screens */
+    
+</style>
+</head>
+<body>
+<div class="sidebar">
+<nav class="nav flex-column">
+<a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">Chennai Printz</a>
+<a class="nav-link active" asp-area="" asp-controller="GSTWithout" asp-action="Index">
+<i class="fas fa-users"></i> Customers
+</a>
+<a class="nav-link" asp-area="" asp-controller="GSTWithout" asp-action="WithOutGSTInvoice">
+<i class="fas fa-file-invoice"></i> AddInvoice
+</a>
+<a class="nav-link" asp-area="" asp-controller="GSTWithout" asp-action="WithOutGSTInvoiceList">
+<i class="fas fa-list"></i>InvoiceList
+</a>
+           @* <a class="nav-link" id="invoiceListLink" href="javascript:void(0);">
+                <i class="fas fa-list"></i> Invoice List
+            </a>*@
+</nav>
+</div>
+ 
+<div class="content">
+<header>
+<nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+@*<div class="container-fluid">
+<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BillingMVCProject</a>
+</div>*@
+</nav>
+</header>
+<div class="container">
+<main role="main" class="pb-3">
+            @RenderBody()
+</main>
+</div>
+</div>
+ 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+    
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+@*<script>
+    document.getElementById('invoiceListLink').onclick = function () {
+        var today = new Date();
+        var dateString = today.toISOString().split('T')[0];
+        console.log(dateString);// Format as yyyy-mm-dd
+        window.location.href = '/GSTWithout/WithOutGSTInvoiceList?invoiceDate=' + dateString;
+    };
+</script>*@

@@ -1,0 +1,202 @@
+﻿@model IEnumerable<BillingMVCProject.UIViewModels.InvoiceCustomerDetail>
+
+
+<div class="container mt-4">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success auto-hide-message" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger auto-hide-message" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @*<form method="get" asp-action="FilterInvoices" class="row mb-3">
+        <div class="col-md-4">
+            <label for="invoiceDate" class="form-label">Select Invoice Date:</label>
+            <input type="date" id="invoiceDate" name="invoiceDate" class="form-control"
+                   value="@ViewData["InvoiceDate"]"
+                   onchange="this.form.submit()" />
+        </div>
+
+        <div class="col-md-4">
+            <label for="search" class="form-label">Search Invoices:</label>
+            <input type="text" id="search" name="search" class="form-control"
+                   placeholder="Search by invoice number, customer name..."
+                   value="@ViewData["SearchQuery"]" />
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-search"></i> Search
+            </button>
+            <div class="d-flex justify-content-end">
+                <a href="@Url.Action("WithOutGSTInvoiceList", "GSTWithout")" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </form>*@
+
+
+    <form method="get" asp-action="FilterInvoices" class="row mb-3">
+        <div class="col-md-4">
+            <label for="invoiceDate" class="form-label">Select Invoice Date:</label>
+            <input type="date" id="invoiceDate" name="invoiceDate" class="form-control"
+                    onchange="this.form.submit()" />
+        </div>
+
+        <div class="col-md-4">
+            <label for="search" class="form-label">Search Invoices:</label>
+            <input type="text" id="search" name="search" class="form-control"
+                   placeholder="Search by invoice number, customer name..." />
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary" id="searchclick">
+                <i class="fa fa-search"></i> Search
+            </button>
+            <div class="d-flex justify-content-end">
+                <a href="@Url.Action("WithOutGSTInvoiceList", "GSTWithout")" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="@Url.Action("Index", "GSTWithout")" class="btn btn-secondary">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <!-- Invoice Table -->
+    <table id="myTables" class="table table-bordered table-hover" style="border-color: #b1b1b1;">
+        <thead>
+            <tr>
+                <th>Invoice ID</th>
+                <th>CustomerName</th>
+                <th>Invoice Date</th>
+                <th>Delivery Charge</th>
+                <th>Grand Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var invoice in Model)
+            {
+                <tr>
+                    <td>@invoice.InvoiceId</td>
+                    <td>@invoice.CustomerName</td>
+                    <td>@invoice.Invoicedate.ToString("dd/MM/yyyy")</td>
+                    <td>@invoice.DeliveryCharge</td>
+                    <td>@invoice.GrandTotal</td>
+                    <td style="display:flex;flex-direction:row;gap:5px;">
+                        <button type="button" class="btn btn-info"
+                                data-bs-toggle="modal"
+                                data-bs-target="#invoiceModal"
+                                onclick="loadInvoiceDetails('@invoice.InvoiceId', 'view')" style="padding: 2px 18px;font-weight: bold;">
+                            View
+                        </button>
+                        <button type="button" class="btn btn-warning"
+                                data-bs-toggle="modal"
+                                data-bs-target="#invoiceModal"
+                                onclick="loadInvoiceDetails('@invoice.InvoiceId', 'edit')" style=" padding: 2px 18px;font-weight: bold;">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 100%; width: 1000px;">
+        <!-- Set custom width -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Invoice Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="invoiceModalBody">
+                <!-- Partial view will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function loadInvoiceDetails(invoiceId, actionFlag) {
+        $('#invoiceModalBody').html("");
+        console.log(invoiceId, actionFlag);
+        var url = gStrIpVal + 'GSTWithout/ViewInvoiceDetails';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: { id: invoiceId, flag: actionFlag },
+            success: function (data) {
+                console.log(data);
+                if (actionFlag === 'view') {
+                    $('#invoiceModalBody').html(data); // Load the partial view content for viewing
+                } else if (actionFlag === 'edit') {
+                    // Optional: redirect or load content into the modal for editing
+                    $('#invoiceModalBody').html(data); // Load edit content if applicable
+                }
+            },
+            error: function () {
+                alert('Error loading invoice details.');
+            }
+        });
+    }
+    function updateDateAndSubmit() {
+        // Get the selected date from the date input
+        var selectedDate = document.getElementById("invoiceDate").value;
+
+        // Log the selected date (for debugging purposes, you can remove it later)
+        console.log("Selected date: ", selectedDate);
+
+        // If you want to automatically submit the form after changing the date:
+        document.querySelector("form").submit();
+    }
+
+    window.onload = function () {
+        // Select all elements with the class 'auto-hide-message'
+        var alertMessages = document.querySelectorAll('.auto-hide-message');
+
+        // Loop through each alert and set the timeout to hide them
+        alertMessages.forEach(function (alertMessage) {
+            setTimeout(function () {
+                alertMessage.style.display = "none";
+            }, 2000); // 2000 milliseconds = 2 seconds
+        });
+    };
+    $(document).ready(function () {
+        var today = new Date();
+        console.log(today);
+        var dateString = today.toISOString().split('T')[0];
+        console.log(dateString);
+
+        //$('#invoiceDate').val(dateString);
+        sessionStorage.setItem('PublicationDate', dateString);
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        // Get a single parameter
+        console.log(urlParams.get('invoiceDate'));  // 'books' (only the first one)
+
+        // Get all values for 'category'
+        console.log(urlParams.getAll('invoiceDate'));
+        $('#invoiceDate').val(typeof urlParams.get('invoiceDate') != "undefind" && urlParams.get('invoiceDate') != "" ? urlParams.get('invoiceDate') : dateString);
+        //GetInvoicedetails(dateString);
+        //window.location.href = '/GSTWithout/WithOutGSTInvoiceList?invoiceDate=' + dateString;
+    });
+</script>

@@ -1,0 +1,98 @@
+﻿
+
+
+@*<div class="container mt-4">
+    
+    <form method="get" asp-action="FilterInvoices" class="row mb-3">
+        <div class="col-md-4">
+            <label for="invoiceDate" class="form-label">Select Invoice Date:</label>
+            <input type="date" id="invoiceDate" name="invoiceDate" class="form-control" onchange="this.form.submit()">
+        </div>
+    </form>
+
+    
+    <table id="myTables" class="table table-bordered table-hover" style="border-color: #b1b1b1;">
+        <thead>
+            <tr>
+                <th>Invoice ID</th>
+                <th>CustomerName</th>
+                <th>Notes</th>
+                <th>Invoice Date</th>
+                <th>Delivery Charge</th>
+                <th>GST Amount</th>
+                <th>Grand Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var invoice in Model)
+            {
+                <tr>
+                    <td>@invoice.InvoiceId</td>
+                    <td>@invoice.CustomerName</td>
+                    <td>@invoice.Notes</td>
+                    <td>@invoice.Invoicedate.ToString("dd/MM/yyyy")</td>
+                    <td>@invoice.DeliveryCharge</td>
+                    <td>@invoice.GstAmount</td>
+                    <td>@invoice.GrandTotal</td>
+                    <td>
+                        <button type="button" class="btn btn-info"
+                                data-bs-toggle="modal"
+                                data-bs-target="#invoiceModal"
+                                onclick="loadInvoiceDetails('@invoice.InvoiceId', 'view')">
+                            View Details
+                        </button>
+                        <button type="button" class="btn btn-warning"
+                                data-bs-toggle="modal"
+                                data-bs-target="#invoiceModal"
+                                onclick="loadInvoiceDetails('@invoice.InvoiceId', 'edit')">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 100%; width: 1000px;">
+      
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Invoice Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="invoiceModalBody">
+              
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function loadInvoiceDetails(invoiceId, actionFlag) {
+        console.log(invoiceId, actionFlag);
+        var url = gStrIpVal + 'Billing/ViewInvoiceDetails';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: { id: invoiceId, flag: actionFlag },
+            success: function (data) {
+                console.log(data);
+                if (actionFlag === 'view') {
+                    $('#invoiceModalBody').html(data); 
+                } else if (actionFlag === 'edit') {
+                    
+                    $('#invoiceModalBody').html(data); 
+                }
+            },
+            error: function () {
+                alert('Error loading invoice details.');
+            }
+        });
+    }
+   
+</script>*@
+

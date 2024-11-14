@@ -1,0 +1,403 @@
+﻿
+@model BillingMVCProject.UIViewModels.InvoiceDetailViewModel
+
+@if (Model != null)
+{  
+    @if (Model.flag == "view")
+    {
+        <div id="invoiceContainer" class="container mt-4" style="border: 2px solid #b1b1b1; padding: 20px; max-width: 800px;">
+            <!-- Header Section -->
+            <div class="row mb-4" style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="col-4" style="text-align: left;">
+                    <img src="https://play-lh.googleusercontent.com/Jkmt6UYYbj3dOtvpVm8V8_ZA2A5FCHxs6wcXXZe2nsqBZebJVpNyd7dp5JNFhhyWlSI=w240-h480-rw" alt="Company Logo" style="width: 100px;">
+                </div>
+                <div class="col-4" style="text-align: center;">
+                    <h3 style="margin: 0;">INVOICE</h3>
+                </div>
+                <div class="col-4" style="text-align: right;">
+                    <h5 style="margin: 0;">Amount Due:</h5>
+                </div>
+            </div>
+
+            <!-- Invoice Details -->
+            <div class="row mb-3" style="display: flex; justify-content: space-between;">
+                <div class="col-6">
+                    <h5>Invoice Number: @Model.InvoiceId</h5>
+                    <h5>Date: @Model.Invoicedate.ToString("dd/MM/yyyy")</h5>
+                </div>
+            </div>
+
+            <!-- Bill From and To Information -->
+            <!-- Bill From and Bill To Information -->
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #b1b1b1; margin-bottom: 20px;">
+                <thead>
+                    <tr>
+                        <th style="width: 50%; border-right: 1px solid #9e9e9e; padding: 10px; text-align: left; border-top: 1px solid #9e9e9e;">
+                            <h4 style="margin: 0;">Bill From:</h4>
+                        </th>
+                        <th style="width: 50%; padding: 10px; text-align: left; border-top: 1px solid #9e9e9e;">
+                            <h4 style="margin: 0;">Bill To:</h4>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-right: 1px solid #9e9e9e; padding: 10px; vertical-align: top;">
+                            <p style="margin: 5px 0;"><strong>CHENNAI PRINTZ</strong></p>
+                            <p style="margin: 5px 0;">No:7/1, Duraisamy Street, Vadapalani, Chennai-26</p>
+                            <p style="margin: 5px 0;"><strong>Phone No:</strong> 6383669516</p>
+                        </td>
+                        <td style="padding: 10px; vertical-align: top;">
+                            <p style="margin: 5px 0;"><strong>@Model.CustomerName</strong></p>
+                            <p style="margin: 5px 0;">@Model.Address</p>
+                            <p style="margin: 5px 0;"><strong>Phone:</strong> @Model.PhoneNumber</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <!-- Invoice Table -->
+            <table class="table table-bordered mt-4" style="width: 100%; border-collapse: collapse; text-align: center;">
+                <thead style="background-color: #f1f1f1;">
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th style="text-align: left;">Description</th>
+                        <th>Size</th>
+                        <th>GSM</th>
+                        <th>Quantity</th>
+                        <th>Side</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Items.Count; i++)
+                    {
+                        var itemTotal = Model.Items[i].Quantity * Model.Items[i].UnitPrice;
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;">@(i + 1)</td>
+                            <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">@Model.Items[i].Description</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">@Model.Items[i].Size</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">@Model.Items[i].Gsm</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">@Model.Items[i].Quantity</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">@Model.Items[i].Side</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">@Model.Items[i].UnitPrice</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">@itemTotal</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Summary Section -->
+            <div class="row mt-4" style="display: flex; justify-content: space-between;">
+                <div class="col-md-6" style="border: 1px solid #b1b1b1; padding: 10px; width: 45%;">
+                    <h5>Grand Total in Words:</h5>
+                    <p id="grandTotalInWords"></p>
+                </div>
+                <div class="col-md-6 text-end" style="text-align: right;">
+                    @{
+                        var subtotal = Model.Items.Sum(item => item.Quantity * item.UnitPrice);
+                        var gstAmount = subtotal * 0.18m;
+                        var grandTotal = subtotal + gstAmount + Model.DeliveryCharge;
+                    }
+                    <h5>Subtotal: ₹<span id="SubTotal">@subtotal.ToString("N2")</span></h5>
+                    <h5>Other Charge: ₹<span id="SubTotal">@Model.DeliveryCharge.ToString("N2")</span></h5>
+                    <h5>GST (18%): ₹<span id="gstAmount">@gstAmount.ToString("N2")</span></h5>
+                    <h5>Grand Total: ₹<span id="grandTotal">@grandTotal.ToString("N2")</span></h5>
+                </div>
+            </div>
+
+            <!-- Authorized Signature Section -->
+            <div class="row mt-5" style="text-align: right;">
+                <div class="col text-end" style="border-top: 1px solid #000; padding-top: 10px;">
+                    <h6>Authorized Signature</h6>
+                </div>
+            </div>
+        </div>
+
+        <!-- Print and Save Buttons (Will not display on print) -->
+        <div style="margin-top: 20px; text-align: center;" class="d-print-none">
+            <button type="button" onclick="printInvoice()" style="background-color: #007bff; color: #fff; border: none; padding: 10px 20px; cursor: pointer;">
+                Print
+            </button>
+            <button type="submit" form="invoiceForm" style="background-color: #28a745; color: #fff; border: none; padding: 10px 20px; cursor: pointer;">
+                Save Invoice
+            </button>
+            <button type="button" onclick="recordPayment()" style="background-color: #6c757d; color: #fff; border: none; padding: 10px 20px; cursor: pointer;">
+                Record Payment
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="container mt-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Edit Invoice</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="UpdateInvoice" asp-controller="Billing" method="post">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h4 class="mb-0">@Model.InvoiceId</h4>
+                                <input type="hidden" name="InvoiceId" id="invoiceContent" value="@Model.InvoiceId" />
+                            </div>
+                            <div class="col text-right">
+                                <h4 class="text-danger">Unpaid</h4>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Bill From:</h5>
+                                <p>From Bill Address</p> <!-- Replace with actual billing address -->
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <h5>Date:</h5>
+                                <p>@Model.Invoicedate.ToString("dd/MM/yyyy")</p> <!-- Display the invoice date from the model -->
+                                <input type="hidden" name="InvoiceDate" value="@Model.Invoicedate.ToString("MM/dd/yyyy")" /> <!-- Hidden input for the invoice date -->
+                                <h5>Amount Due:</h5>
+                                @*<h3>@Model.CustomerName.ToString("C")</h3>*@ <!-- Display the Grand Total from the model -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Bill To:</h5>
+                                <div class="form-group">
+                                    <select class="form-control" name="CustomerId" id="customerSelect">
+                                        <option value="">Choose a customer...</option>
+                                        @foreach (var customer in Model.Customers)
+                                        {
+                                            <option value="@customer.CustomerId"
+                                                    selected="@(customer.CustomerId == Model.Customer_id ? "selected" : null)">
+                                                @customer.CustomerName
+                                            </option>
+                                        }
+                                    </select>
+                                    <div class="card-body">
+                                        <p><strong>Name:</strong> <span id="customerName" value="@Model.Customer_id">@Model.CustomerName</span></p>
+                                        <p><strong>Email:</strong> <span id="customerEmail">@Model.EmailId</span></p>
+                                        <p><strong>Phone:</strong> <span id="customerPhone">@Model.PhoneNumber</span></p>
+                                        <p><strong>Address:</strong> <span id="customerAddress">@Model.Address</span></p>
+                                    </div>
+                                </div>
+
+                                <!-- Customer Details (hidden initially) -->
+                                @*<div class="mt-3" id="customerDetails" style="display:none;">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5>Customer Details</h5>
+                                            <button type="button" class="btn btn-link" aria-label="Close" onclick="closeCustomerDetails()" style="border: none; background: none;">
+                                                <i class="fa fa-times" aria-hidden="true"></i> <!-- Font Awesome close icon -->
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>Name:</strong> <span id="customerName">@Model.CustomerName</span></p>
+                                            <p><strong>Email:</strong> <span id="customerEmail">@Model.EmailId</span></p>
+                                            <p><strong>Phone:</strong> <span id="customerPhone">@Model.PhoneNumber</span></p>
+                                            <p><strong>Address:</strong> <span id="customerAddress">@Model.Address</span></p>
+                                            <button type="button" class="btn btn-secondary" onclick="closeCustomerDetails()">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            </div>
+                        </div>
+                        
+
+                        <!-- Items Table -->
+                        <table class="table table-bordered invoice-table mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Size</th>
+                                    <th>GSM</th>
+                                    <th>Quantity</th>
+                                    <th>Side</th>
+                                    <th>Unit Price</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceItems">
+                                @for (int i = 0; i < Model.Items.Count; i++)
+                                {
+                                    <tr>
+                                        <input type="hidden" name="Items[@i].ItemId" value="@Model.Items[i].ItemId" /> <!-- Hidden ItemId field -->
+                                        <td><input type="text" class="form-control" name="Items[@i].Description" value="@Model.Items[i].Description" placeholder="Description" ></td>
+                                        <td><input type="text" class="form-control" name="Items[@i].Size" value="@Model.Items[i].Size" placeholder="Size" ></td>
+                                        <td><input type="text" class="form-control" name="Items[@i].GSM" value="@Model.Items[i].Gsm" placeholder="GSM" ></td>
+                                        <td><input type="number" class="form-control" name="Items[@i].Quantity" value="@Model.Items[i].Quantity" placeholder="Quantity" ></td>
+                                        <td><input type="text" class="form-control" name="Items[@i].Side" value="@Model.Items[i].Side" placeholder="Side" ></td>
+                                        <td><input type="number" class="form-control" name="Items[@i].UnitPrice" value="@Model.Items[i].UnitPrice" placeholder="Unit Price" ></td>
+                                        <td><span>@(Model.Items[i].Quantity * Model.Items[i].UnitPrice)</span></td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-primary" id="addItemButton">
+                            <i class="fa fa-plus"></i> Add Item
+                        </button>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Notes</label>
+                                    <textarea class="form-control" name="Notes" rows="3"></textarea> <!-- Add name for binding -->
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <h5>
+                                    Delivery Charge:
+                                    <input type="text" class="form-control d-inline-block" id="deliveryCharge" name="DeliveryCharge" value="@Model.DeliveryCharge" placeholder="Enter Delivery Charge" style="width: auto; display: inline;">
+                                </h5>
+                                <h5>
+                                    GST (5%):
+                                    <input type="text" class="form-control d-inline-block" id="gstAmount" name="GstAmount" value="@Model.GstAmount" placeholder="Enter GST Amount" style="width: auto; display: inline;">
+                                </h5>
+                                <h5>
+                                    Grand Total:
+                                    <input type="text" class="form-control d-inline-block" id="grandTotal" name="GrandTotal" value="@Model.GrandTotal" placeholder="Enter Grand Total" style="width: auto; display: inline;">
+                                </h5>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success mt-3">
+                            <i class="fa fa-save"></i> Update Invoice
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+else
+{
+
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Handle customer selection
+        $('#customerSelect').on('change', function () {
+            var selectedCustomerId = $(this).val();
+
+            if (selectedCustomerId) {
+                // Make an AJAX request to fetch the customer details
+                $.ajax({
+                    url: '@Url.Action("GetCustomerDetails", "Billing")', // URL of the controller action
+                    type: 'GET',
+                    data: { customerId: selectedCustomerId },
+                    success: function (customer) {
+                        console.log(customer);
+                        // Populate the customer details
+                        $('#customerName').text(customer.customerName);
+                        $('#customerEmail').text(customer.email);
+                        $('#customerPhone').text(customer.phone);
+                        $('#customerAddress').text(customer.address);
+
+                        // Show the customer details section
+                        $('#customerDetails').show();
+                    },
+                    error: function () {
+                        // Hide the customer details if an error occurs
+                        $('#customerDetails').hide();
+                    }
+                });
+            } else {
+                // Hide the customer details if no customer is selected
+                $('#customerDetails').hide();
+            }
+        });
+
+    });
+    let itemIndex = 1; // Keep track of the number of items
+
+    document.getElementById('addItemButton').addEventListener('click', function () {
+        // Create a new table row
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+                    <td><input type="text" class="form-control" name="Items[${itemIndex}].Description" placeholder="Description"></td>
+                    <td><input type="text" class="form-control" name="Items[${itemIndex}].Size" placeholder="Size"></td>
+                    <td><input type="text" class="form-control" name="Items[${itemIndex}].GSM" placeholder="GSM"></td>
+                    <td><input type="number" class="form-control" name="Items[${itemIndex}].Quantity" placeholder="Quantity"></td>
+                    <td><input type="text" class="form-control" name="Items[${itemIndex}].Side" placeholder="Side"></td>
+                    <td><input type="number" class="form-control" name="Items[${itemIndex}].UnitPrice" placeholder="Unit Price"></td>
+                    <td><span class="itemTotal">0.00</span></td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+        document.getElementById('invoiceItems').appendChild(newRow);
+        itemIndex++; // Increment the item index for the next item
+    });
+
+    function removeRow(button) {
+        // Remove the row that contains the button
+        const row = button.closest('tr');
+        row.parentNode.removeChild(row);
+    }
+    function printInvoice() {
+        var originalContent = document.body.innerHTML;
+        var invoiceContent = document.getElementById('invoiceContainer').outerHTML;
+
+        document.body.innerHTML = invoiceContent;
+        window.print();
+
+        // Restore original content after printing
+        document.body.innerHTML = originalContent;
+    }
+
+    function recordPayment() {
+        alert("Record Payment functionality here.");
+    }
+
+    function numberToWords(num) {
+        const belowTwenty = [
+            "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+            "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+            "Eighteen", "Nineteen"
+        ];
+        const tens = [
+            "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+        ];
+        const aboveThousand = ["", "Thousand", "Million", "Billion"];
+
+        if (num === 0) return belowTwenty[0];
+
+        let words = '';
+        let i = 0;
+
+        function helper(n) {
+            if (n < 20) return belowTwenty[n] + ' ';
+            if (n < 100) return tens[Math.floor(n / 10)] + ' ' + helper(n % 10);
+            if (n < 1000) return belowTwenty[Math.floor(n / 100)] + ' Hundred ' + helper(n % 100);
+        }
+
+        while (num > 0) {
+            let n = num % 1000;
+            if (n !== 0) {
+                words = helper(n) + aboveThousand[i] + ' ' + words;
+            }
+            num = Math.floor(num / 1000);
+            i++;
+        }
+
+        return words.trim();
+    }
+
+    // Example usage
+    const grandTotal = 1234.56; // Replace with your actual total value
+    const grandTotalWords = numberToWords(Math.floor(grandTotal)); // Convert whole number part
+    const grandTotalInWords = `${grandTotalWords} and ${((grandTotal % 1) * 100).toFixed(0)}/100`; // Handle cents
+    console.log(grandTotalInWords);
+
+</script>
+
